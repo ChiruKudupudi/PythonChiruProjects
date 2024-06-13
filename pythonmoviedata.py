@@ -2,11 +2,11 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-st.write("Hello World")
-st.write("## This is a H2 Title!")
+st.write("Hello Blue Power")
+st.write("Get visual based on movie name. contact CKU for info")
 x = st.text_input("Movie", "Star Wars")
 
-if st.button("Click Me"):
+if st.button("Submit"):
     st.write(f"Your favorite movie is `{x}`")
 
 
