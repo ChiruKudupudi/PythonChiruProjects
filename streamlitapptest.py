@@ -19,7 +19,7 @@ import io
 
 warnings.filterwarnings('ignore')
 
-st.set_page_config(page_title="sales data csv sample!!!", page_icon=":bar_chart:",layout="wide")
+st.set_page_config(page_title="Sales Analytics!!!", page_icon=":bar_chart:",layout="wide")
 
 st.title(" :bar_chart: Sales Dashboard")
 st.markdown('<style>div.block-container{padding-top:1rem;}</style>',unsafe_allow_html=True)
@@ -36,7 +36,7 @@ if fl is not None:
     string_data = bytes_data.decode('ISO-8859-1')
     # Use StringIO to create a pandas DataFrame
     df = pd.read_csv(io.StringIO(string_data))
-    st.write(df)  # Display uploaded DataFrame
+    st.write(df)  
 else:
     df = pd.read_csv("salesdatacsvsample.csv", encoding = "ISO-8859-1")
 
