@@ -15,12 +15,12 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 import warnings
-import os
+
 warnings.filterwarnings('ignore')
 
 st.set_page_config(page_title="sales data csv sample!!!", page_icon=":bar_chart:",layout="wide")
 
-st.title(" :bar_chart: Sample Sales EDA")
+st.title(" :bar_chart: Sales Dashboard")
 st.markdown('<style>div.block-container{padding-top:1rem;}</style>',unsafe_allow_html=True)
 
 fl = st.file_uploader(":file_folder: Upload a file",type=(["csv","txt","xlsx","xls"]))
@@ -29,7 +29,6 @@ if fl is not None:
     st.write(filename)
     df = pd.read_csv(filename, encoding = "ISO-8859-1")
 else:
-    #os.chdir(r"C:\Users\AEPAC\Desktop\Streamlit")
     df = pd.read_csv("salesdatacsvsample.csv", encoding = "ISO-8859-1")
 
 col1, col2 = st.columns((2))
