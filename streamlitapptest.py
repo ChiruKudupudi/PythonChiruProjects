@@ -1,7 +1,7 @@
 #code
 import streamlit as st
 import pandas as pd
-
+@st.cache_data
 def load_data(url):
     df = pd.read_csv(url)
     return df
