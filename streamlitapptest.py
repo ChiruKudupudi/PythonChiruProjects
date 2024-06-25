@@ -15,6 +15,7 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 import warnings
+import io
 
 warnings.filterwarnings('ignore')
 
@@ -25,9 +26,17 @@ st.markdown('<style>div.block-container{padding-top:1rem;}</style>',unsafe_allow
 
 fl = st.file_uploader(":file_folder: Upload a file",type=(["csv","txt","xlsx","xls"]))
 if fl is not None:
-    filename = fl.name
-    st.write(filename)
-    df = pd.read_csv(filename, encoding = "ISO-8859-1")
+    #filename = fl.name
+    #st.write(filename)
+    #df = pd.read_csv(filename, encoding = "ISO-8859-1")
+    # Read file as bytes
+    
+    bytes_data = fl.read()
+    # Convert bytes data to string using UTF-8 encoding
+    string_data = bytes_data.decode('ISO-8859-1')
+    # Use StringIO to create a pandas DataFrame
+    df = pd.read_csv(io.StringIO(string_data))
+    st.write(df)  # Display uploaded DataFrame
 else:
     df = pd.read_csv("salesdatacsvsample.csv", encoding = "ISO-8859-1")
 
