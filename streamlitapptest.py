@@ -151,7 +151,7 @@ def display_another_page():
 
     # Plotting bar chart for Count of Operations by Full Name
     
-  fig_bar_full_name = px.bar(count_by_full_name, x='Fullname', y='Count of Operations', text='Count of Operations',
+    fig_bar_full_name = px.bar(count_by_full_name, x='Fullname', y='Count of Operations', text='Count of Operations',
                                template='seaborn', title='Count of Operations by Full Name')
     fig_bar_full_name.update_traces(texttemplate='%{text:.2s}', textposition='outside')
     fig_bar_full_name.update_layout(xaxis_title='Fullname', yaxis_title='Count of Operations')
