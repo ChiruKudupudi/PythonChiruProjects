@@ -44,7 +44,7 @@ def process_data(df):
     }).reset_index()
     return final_summary_df
 
-def display_main_content():
+def display_report1():
     df = load_csv("inputfile.csv")
     df1 = load_csv("inputfile1.csv")
 
@@ -74,7 +74,8 @@ def display_main_content():
         count_by_date = df_merged.groupby('Date').size().reset_index(name='Count of Operations')
 
         st.subheader("Count of Operations by Creation Date")
-        fig_bar = px.bar(count_by_date, x='Date', y='Count of Operations', text='Count of Operations',template='seaborn', title='Count of Operations by Creation Date')
+        fig_bar = px.bar(count_by_date, x='Date', y='Count of Operations', text='Count of Operations',
+                         template='seaborn', title='Count of Operations by Creation Date')
         fig_bar.update_traces(texttemplate='%{text:.2s}', textposition='outside')
         fig_bar.update_layout(xaxis_title='Creation Date', yaxis_title='Count of Operations')
         st.plotly_chart(fig_bar, use_container_width=True)
@@ -82,13 +83,12 @@ def display_main_content():
         record_type_summary = df_merged.groupby('Operation')['RecordType'].sum().reset_index()
 
         st.subheader("Sum of RecordType by Operation")
-        fig_pie = px.pie(record_type_summary, values='RecordType', names='Operation', 
-                         title='Sum of RecordType by Operation', hole=0.5)
+        fig_pie = px.pie(record_type_summary, values='RecordType', names='Operation', title='Sum of RecordType by Operation', hole=0.5)
         fig_pie.update_traces(textposition='inside', textinfo='percent+label')
         st.plotly_chart(fig_pie, use_container_width=True)
 
-def display_another_page():
-    st.title("Page 2")
+def display_report2():
+    st.title("Report2")
     
     df = load_csv("inputfile.csv")
     df1 = load_csv("inputfile1.csv")
@@ -116,13 +116,13 @@ def display_another_page():
     if not df_filtered.empty:
         count_by_full_name = df_filtered.groupby('Fullname').size().reset_index(name='Count of Operations')
 
-        fig_bar_full_name = px.bar(count_by_full_name, x='Fullname', y='Count of Operations', text='Count of Operations',template='seaborn', title='Count of Operations by Full Name')
+        fig_bar_full_name = px.bar(count_by_full_name, x='Fullname', y='Count of Operations', text='Count of Operations', template='seaborn', title='Count of Operations by Full Name')
         fig_bar_full_name.update_traces(texttemplate='%{text:.2s}', textposition='outside')
         fig_bar_full_name.update_layout(xaxis_title='Fullname', yaxis_title='Count of Operations')
         st.plotly_chart(fig_bar_full_name, use_container_width=True)
 
-def display_page3():
-    st.title("Page 3")
+def display_report3():
+    st.title("Report3")
 
     df1 = load_csv("inputfile1.csv")
 
@@ -150,31 +150,31 @@ if query_params.get('logged_in') == ['true']:
 if st.session_state.loggedin:
     st.sidebar.header("Navigation")
 
-    is_page_main = query_params.get('page', ['main'])[0] == 'main'
-    is_page_another = query_params.get('page', ['main'])[0] == 'another'
-    is_page3 = query_params.get('page', ['main'])[0] == 'page3'
+    is_page_report1 = query_params.get('page', ['report1'])[0] == 'report1'
+    is_page_report2 = query_params.get('page', ['report1'])[0] == 'report2'
+    is_page_report3 = query_params.get('page', ['report1'])[0] == 'report3'
 
-    page1_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
-    page2_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
-    page3_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
+    report1_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
+    report2_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
+    report3_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
 
-    if is_page_main:
-        st.markdown(page1_button_css, unsafe_allow_html=True)
-    elif is_page_another:
-        st.markdown(page2_button_css, unsafe_allow_html=True)
-    elif is_page3:
-        st.markdown(page3_button_css, unsafe_allow_html=True)
+    if is_page_report1:
+        st.markdown(report1_button_css, unsafe_allow_html=True)
+    elif is_page_report2:
+        st.markdown(report2_button_css, unsafe_allow_html=True)
+    elif is_page_report3:
+        st.markdown(report3_button_css, unsafe_allow_html=True)
 
-    page1_button = st.sidebar.button("Page 1", key='page1_button', help="Select Page 1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="main"))
-    page2_button = st.sidebar.button("Page 2", key='page2_button', help="Select Page 2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="another"))
-    page3_button = st.sidebar.button("Page 3", key='page3_button', help="Select Page 3", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="page3"))
+    report1_button = st.sidebar.button("Report1", key='report1_button', help="Go to Report1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="report1"))
+    report2_button = st.sidebar.button("Report2", key='report2_button', help="Go to Report2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="report2"))
+    report3_button = st.sidebar.button("Report3", key='report3_button', help="Go to Report3", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="report3"))
 
-    if is_page_main:
-        display_main_content()
-    elif is_page_another:
-        display_another_page()
-    elif is_page3:
-        display_page3()
+    if is_page_report1:
+        display_report1()
+    elif is_page_report2:
+        display_report2()
+    elif is_page_report3:
+        display_report3()
 
 else:
     st.sidebar.header("Login")
