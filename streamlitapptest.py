@@ -126,50 +126,23 @@ if st.session_state.loggedin:
     # Navigation links in the sidebar
     st.sidebar.header("Navigation")
 
-    # Handle navigation buttons
-    if st.sidebar.button("Page 1"):
-        st.experimental_set_query_params(logged_in=True, page="main")
-        st.experimental_rerun()
-    if st.sidebar.button("Page 2"):
-        st.experimental_set_query_params(logged_in=True, page="another")
-        st.experimental_rerun()
+   # Determine which page is active based on query parameters
+    is_page_main = query_params.get('page', ['main'])[0] == 'main'
+    is_page_another = query_params.get('page', ['main'])[0] == 'another'
 
-    # Load the primary CSV file
-    try:
-        df = pd.read_csv("inputfile.csv")
-    except FileNotFoundError:
-        st.error("The file 'inputfile.csv' was not found.")
-        st.stop()
+    # Highlight the active button based on the current page
+    if is_page_main:
+        page1_button = st.sidebar.button("Page 1", key='page1_button', help="Go to Page 1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="main"))
+        page2_button = st.sidebar.button("Page 2", key='page2_button', help="Go to Page 2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="another"))
+    elif is_page_another:
+        page1_button = st.sidebar.button("Page 1", key='page1_button', help="Go to Page 1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="main"))
+        page2_button = st.sidebar.button("Page 2", key='page2_button', help="Go to Page 2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="another"))
 
-    # Load the secondary CSV file
-    try:
-        df1 = pd.read_csv("inputfile1.csv")
-    except FileNotFoundError:
-        st.warning("The file 'inputfile1.csv' was not found. Proceeding with only 'inputfile.csv'.")
-        df1 = pd.DataFrame()  # Empty DataFrame if the file is not found
+    if is_page_main:
+        display_main_content()
+    elif is_page_another:
+        display_another_page()
 
-    # Check if the necessary columns exist
-    if 'UserId' not in df.columns:
-        st.error("The column 'UserId' is missing from 'inputfile.csv'.")
-        st.stop()
-    if not df1.empty and 'Userid' not in df1.columns:
-        st.error("The column 'Userid' is missing from 'inputfile1.csv'.")
-        st.stop()
-
-    # Perform a left join if the secondary DataFrame is not empty
-    if not df1.empty:
-        df_merged = pd.merge(df, df1, left_on='UserId', right_on='Userid', how='left')
-    else:
-        df_merged = df
-
-    if 'Fullname' not in df_merged.columns:
-        st.error("The column 'Fullname' is missing from the merged DataFrame.")
-        st.stop()
-
-    if query_params.get('page', ['main'])[0] == 'main':
-        display_main_content(df_merged)
-    elif query_params.get('page', ['main'])[0] == 'another':
-        display_another_page(df_merged)
 else:
     st.sidebar.header("Login")
 
