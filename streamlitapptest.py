@@ -44,7 +44,6 @@ def process_data(df):
     }).reset_index()
     return final_summary_df
 
-# Function to display the main content after login
 def display_main_content():
     df = load_csv("inputfile.csv")
     df1 = load_csv("inputfile1.csv")
@@ -89,7 +88,6 @@ def display_main_content():
         fig_pie.update_traces(textposition='inside', textinfo='percent+label')
         st.plotly_chart(fig_pie, use_container_width=True)
 
-# Function to display another page content
 def display_another_page():
     st.title("Page 2")
     
@@ -125,6 +123,22 @@ def display_another_page():
         fig_bar_full_name.update_layout(xaxis_title='Fullname', yaxis_title='Count of Operations')
         st.plotly_chart(fig_bar_full_name, use_container_width=True)
 
+def display_page3():
+    st.title("Page 3")
+
+    df1 = load_csv("inputfile1.csv")
+
+    if 'Dept' not in df1.columns:
+        st.error("The column 'Dept' is missing from 'inputfile1.csv'.")
+        return
+
+    count_by_dept = df1['Dept'].value_counts().reset_index()
+    count_by_dept.columns = ['Dept', 'Count']
+
+    fig_line = px.line(count_by_dept, x='Dept', y='Count', title='Count of Dept', markers=True)
+    fig_line.update_layout(xaxis_title='Dept', yaxis_title='Count')
+    st.plotly_chart(fig_line, use_container_width=True)
+
 # Initialize page state
 if "loggedin" not in st.session_state:
     st.session_state.loggedin = False
@@ -140,23 +154,29 @@ if st.session_state.loggedin:
 
     is_page_main = query_params.get('page', ['main'])[0] == 'main'
     is_page_another = query_params.get('page', ['main'])[0] == 'another'
+    is_page3 = query_params.get('page', ['main'])[0] == 'page3'
 
     page1_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
     page2_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
+    page3_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
 
     if is_page_main:
         st.markdown(page1_button_css, unsafe_allow_html=True)
-        page1_button = st.sidebar.button("Page 1", key='page1_button', help="Go to Page 1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="main"))
-        page2_button = st.sidebar.button("Page 2", key='page2_button', help="Go to Page 2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="another"))
     elif is_page_another:
         st.markdown(page2_button_css, unsafe_allow_html=True)
-        page1_button = st.sidebar.button("Page 1", key='page1_button', help="Go to Page 1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="main"))
-        page2_button = st.sidebar.button("Page 2", key='page2_button', help="Go to Page 2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="another"))
+    elif is_page3:
+        st.markdown(page3_button_css, unsafe_allow_html=True)
+
+    page1_button = st.sidebar.button("Page 1", key='page1_button', help="Go to Page 1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="main"))
+    page2_button = st.sidebar.button("Page 2", key='page2_button', help="Go to Page 2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="another"))
+    page3_button = st.sidebar.button("Page 3", key='page3_button', help="Go to Page 3", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="page3"))
 
     if is_page_main:
         display_main_content()
     elif is_page_another:
         display_another_page()
+    elif is_page3:
+        display_page3()
 
 else:
     st.sidebar.header("Login")
