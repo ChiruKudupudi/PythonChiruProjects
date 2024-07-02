@@ -74,8 +74,7 @@ def display_main_content():
         count_by_date = df_merged.groupby('Date').size().reset_index(name='Count of Operations')
 
         st.subheader("Count of Operations by Creation Date")
-        fig_bar = px.bar(count_by_date, x='Date', y='Count of Operations', text='Count of Operations',
-                         template='seaborn', title='Count of Operations by Creation Date')
+        fig_bar = px.bar(count_by_date, x='Date', y='Count of Operations', text='Count of Operations',template='seaborn', title='Count of Operations by Creation Date')
         fig_bar.update_traces(texttemplate='%{text:.2s}', textposition='outside')
         fig_bar.update_layout(xaxis_title='Creation Date', yaxis_title='Count of Operations')
         st.plotly_chart(fig_bar, use_container_width=True)
@@ -117,8 +116,7 @@ def display_another_page():
     if not df_filtered.empty:
         count_by_full_name = df_filtered.groupby('Fullname').size().reset_index(name='Count of Operations')
 
-        fig_bar_full_name = px.bar(count_by_full_name, x='Fullname', y='Count of Operations', text='Count of Operations',
-                                   template='seaborn', title='Count of Operations by Full Name')
+        fig_bar_full_name = px.bar(count_by_full_name, x='Fullname', y='Count of Operations', text='Count of Operations',template='seaborn', title='Count of Operations by Full Name')
         fig_bar_full_name.update_traces(texttemplate='%{text:.2s}', textposition='outside')
         fig_bar_full_name.update_layout(xaxis_title='Fullname', yaxis_title='Count of Operations')
         st.plotly_chart(fig_bar_full_name, use_container_width=True)
@@ -167,9 +165,9 @@ if st.session_state.loggedin:
     elif is_page3:
         st.markdown(page3_button_css, unsafe_allow_html=True)
 
-    page1_button = st.sidebar.button("Page 1", key='page1_button', help="Go to Page 1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="main"))
-    page2_button = st.sidebar.button("Page 2", key='page2_button', help="Go to Page 2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="another"))
-    page3_button = st.sidebar.button("Page 3", key='page3_button', help="Go to Page 3", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="page3"))
+    page1_button = st.sidebar.button("Page 1", key='page1_button', help="Select Page 1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="main"))
+    page2_button = st.sidebar.button("Page 2", key='page2_button', help="Select Page 2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="another"))
+    page3_button = st.sidebar.button("Page 3", key='page3_button', help="Select Page 3", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="page3"))
 
     if is_page_main:
         display_main_content()
