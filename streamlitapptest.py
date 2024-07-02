@@ -73,23 +73,7 @@ def display_report1():
     else:
         df_merged = df
 
-    st.write(df_merged)
-
     df_merged['Date'] = pd.to_datetime(df_merged['CreationDate']).dt.date
-    df1_copy = df_merged.copy()
-
-    # Group by UserId, Date, and Operation to count occurrences
-    summary_df = df1_copy.groupby(['Fullname','UserId', 'Date', 'Operation']).size().reset_index(name='Count of Operations')
-
-    final_summary_df = summary_df.groupby('Fullname').agg({
-        'UserId':'first',
-        'Date': 'first',
-        'Operation': 'first',
-        'Count of Operations': 'sum'
-    }).reset_index()
-
-    st.subheader("Operation Count by UserId, Date, and Operation")
-    st.table(final_summary_df[['Fullname','UserId', 'Date', 'Operation', 'Count of Operations']])
 
     # Sidebar filters for Operation and CreationDate
     st.sidebar.header("Filters")
@@ -102,13 +86,27 @@ def display_report1():
     if selected_dates:
         df_merged = df_merged[df_merged['CreationDate'].isin(selected_dates)]
 
+    st.write(df_merged)
+
+    # Group by UserId, Date, and Operation to count occurrences
+    summary_df = df_merged.groupby(['Fullname', 'UserId', 'Date', 'Operation']).size().reset_index(name='Count of Operations')
+
+    final_summary_df = summary_df.groupby('Fullname').agg({
+        'UserId': 'first',
+        'Date': 'first',
+        'Operation': 'first',
+        'Count of Operations': 'sum'
+    }).reset_index()
+
+    st.subheader("Operation Count by UserId, Date, and Operation")
+    st.table(final_summary_df[['Fullname', 'UserId', 'Date', 'Operation', 'Count of Operations']])
+
     # Group by Date to count occurrences of Operation
     count_by_date = df_merged.groupby('Date').size().reset_index(name='Count of Operations')
 
     # Plotting bar chart for Count of Operations by CreationDate
     st.subheader("Count of Operations by Creation Date")
-    fig_bar = px.bar(count_by_date, x='Date', y='Count of Operations', text='Count of Operations',
-                     template='seaborn', title='Count of Operations by Creation Date')
+    fig_bar = px.bar(count_by_date, x='Date', y='Count of Operations', text='Count of Operations', template='seaborn', title='Count of Operations by Creation Date')
     fig_bar.update_traces(texttemplate='%{text:.2s}', textposition='outside')
     fig_bar.update_layout(xaxis_title='Creation Date', yaxis_title='Count of Operations')
     st.plotly_chart(fig_bar, use_container_width=True)
@@ -118,8 +116,7 @@ def display_report1():
 
     # Plotting pie chart for Sum of RecordType by Operation
     st.subheader("Sum of RecordType by Operation")
-    fig_pie = px.pie(record_type_summary, values='RecordType', names='Operation', 
-                     title='Sum of RecordType by Operation', hole=0.5)
+    fig_pie = px.pie(record_type_summary, values='RecordType', names='Operation', title='Sum of RecordType by Operation', hole=0.5)
     fig_pie.update_traces(textposition='inside', textinfo='percent+label')
     st.plotly_chart(fig_pie, use_container_width=True)
 
