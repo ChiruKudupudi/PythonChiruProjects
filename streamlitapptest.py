@@ -138,7 +138,7 @@ def display_another_page():
 
     # Sidebar filter for Full Name
     
-     selected_full_names = st.sidebar.multiselect("Select Full Name(s)", df_merged["Fullname"].unique())
+    selected_full_names = st.sidebar.multiselect("Select Full Name(s)", df_merged["Fullname"].unique())
 
     # Apply Full Name filter to the DataFrame
     if selected_full_names:
