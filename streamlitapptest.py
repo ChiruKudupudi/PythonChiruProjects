@@ -45,9 +45,21 @@ def process_data(df):
     return final_summary_df
 
 def display_report1():
-    df = load_csv("inputfile.csv")
-    df1 = load_csv("inputfile1.csv")
+    # Load the primary CSV file
+    try:
+        df = pd.read_csv("inputfile.csv")
+    except FileNotFoundError:
+        st.error("The file 'inputfile.csv' was not found.")
+        return
 
+    # Load the secondary CSV file
+    try:
+        df1 = pd.read_csv("inputfile1.csv")
+    except FileNotFoundError:
+        st.warning("The file 'inputfile1.csv' was not found. Proceeding with only 'inputfile.csv'.")
+        df1 = pd.DataFrame()  # Empty DataFrame if the file is not found
+
+    # Check if the necessary columns exist
     if 'UserId' not in df.columns:
         st.error("The column 'UserId' is missing from 'inputfile.csv'.")
         return
@@ -55,37 +67,63 @@ def display_report1():
         st.error("The column 'Userid' is missing from 'inputfile1.csv'.")
         return
 
-    df_merged = merge_dataframes(df, df1)
-    final_summary_df = process_data(df_merged)
+    # Perform a left join if the secondary DataFrame is not empty
+    if not df1.empty:
+        df_merged = pd.merge(df, df1, left_on='UserId', right_on='Userid', how='left')
+    else:
+        df_merged = df
+
+    st.write(df_merged)
+
+    df_merged['Date'] = pd.to_datetime(df_merged['CreationDate']).dt.date
+    df1_copy = df_merged.copy()
+
+    # Group by UserId, Date, and Operation to count occurrences
+    summary_df = df1_copy.groupby(['Fullname','UserId', 'Date', 'Operation']).size().reset_index(name='Count of Operations')
+
+    final_summary_df = summary_df.groupby('Fullname').agg({
+        'UserId':'first',
+        'Date': 'first',
+        'Operation': 'first',
+        'Count of Operations': 'sum'
+    }).reset_index()
 
     st.subheader("Operation Count by UserId, Date, and Operation")
-    st.table(final_summary_df[['Fullname', 'UserId', 'Date', 'Operation', 'Count of Operations']])
+    st.table(final_summary_df[['Fullname','UserId', 'Date', 'Operation', 'Count of Operations']])
 
+    # Sidebar filters for Operation and CreationDate
     st.sidebar.header("Filters")
     selected_operation = st.sidebar.multiselect("Select Operation(s)", df_merged["Operation"].unique())
     selected_dates = st.sidebar.multiselect("Select Date(s)", df_merged["CreationDate"].unique())
 
+    # Apply filters to create filtered DataFrame
     if selected_operation:
         df_merged = df_merged[df_merged['Operation'].isin(selected_operation)]
     if selected_dates:
         df_merged = df_merged[df_merged['CreationDate'].isin(selected_dates)]
 
-    if not df_merged.empty:
-        count_by_date = df_merged.groupby('Date').size().reset_index(name='Count of Operations')
+    # Group by Date to count occurrences of Operation
+    count_by_date = df_merged.groupby('Date').size().reset_index(name='Count of Operations')
 
-        st.subheader("Count of Operations by Creation Date")
-        fig_bar = px.bar(count_by_date, x='Date', y='Count of Operations', text='Count of Operations',
-                         template='seaborn', title='Count of Operations by Creation Date')
-        fig_bar.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-        fig_bar.update_layout(xaxis_title='Creation Date', yaxis_title='Count of Operations')
-        st.plotly_chart(fig_bar, use_container_width=True)
+    # Plotting bar chart for Count of Operations by CreationDate
+    st.subheader("Count of Operations by Creation Date")
+    fig_bar = px.bar(count_by_date, x='Date', y='Count of Operations', text='Count of Operations',
+                     template='seaborn', title='Count of Operations by Creation Date')
+    fig_bar.update_traces(texttemplate='%{text:.2s}', textposition='outside')
+    fig_bar.update_layout(xaxis_title='Creation Date', yaxis_title='Count of Operations')
+    st.plotly_chart(fig_bar, use_container_width=True)
 
-        record_type_summary = df_merged.groupby('Operation')['RecordType'].sum().reset_index()
+    # Group by Operation to sum RecordType
+    record_type_summary = df_merged.groupby('Operation')['RecordType'].sum().reset_index()
 
-        st.subheader("Sum of RecordType by Operation")
-        fig_pie = px.pie(record_type_summary, values='RecordType', names='Operation', title='Sum of RecordType by Operation', hole=0.5)
-        fig_pie.update_traces(textposition='inside', textinfo='percent+label')
-        st.plotly_chart(fig_pie, use_container_width=True)
+    # Plotting pie chart for Sum of RecordType by Operation
+    st.subheader("Sum of RecordType by Operation")
+    fig_pie = px.pie(record_type_summary, values='RecordType', names='Operation', 
+                     title='Sum of RecordType by Operation', hole=0.5)
+    fig_pie.update_traces(textposition='inside', textinfo='percent+label')
+    st.plotly_chart(fig_pie, use_container_width=True)
+
+
 
 def display_report2():
     st.title("Report2")
