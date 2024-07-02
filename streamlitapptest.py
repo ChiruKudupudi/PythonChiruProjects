@@ -102,7 +102,6 @@ def display_main_content():
 def display_another_page():
     st.title("Page 2")
     
-
     # Load the primary CSV file
     try:
         df = pd.read_csv("inputfile.csv")
@@ -137,7 +136,6 @@ def display_another_page():
         return
 
     # Sidebar filter for Full Name
-    
     selected_full_names = st.sidebar.multiselect("Select Full Name(s)", df_merged["Fullname"].unique())
 
     # Apply Full Name filter to the DataFrame
@@ -150,7 +148,6 @@ def display_another_page():
     count_by_full_name = df_filtered.groupby('Fullname').size().reset_index(name='Count of Operations')
 
     # Plotting bar chart for Count of Operations by Full Name
-    
     fig_bar_full_name = px.bar(count_by_full_name, x='Fullname', y='Count of Operations', text='Count of Operations',
                                template='seaborn', title='Count of Operations by Full Name')
     fig_bar_full_name.update_traces(texttemplate='%{text:.2s}', textposition='outside')
@@ -176,35 +173,17 @@ if st.session_state.loggedin:
     is_page_another = query_params.get('page', ['main'])[0] == 'another'
 
     # Highlight the active button based on the current page
+    page1_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
+    page2_button_css = '<style>div.stButton > button:first-child {background-color: #007bff;color:white;}</style>'
+
     if is_page_main:
+        st.markdown(page1_button_css, unsafe_allow_html=True)
         page1_button = st.sidebar.button("Page 1", key='page1_button', help="Go to Page 1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="main"))
         page2_button = st.sidebar.button("Page 2", key='page2_button', help="Go to Page 2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="another"))
     elif is_page_another:
+        st.markdown(page2_button_css, unsafe_allow_html=True)
         page1_button = st.sidebar.button("Page 1", key='page1_button', help="Go to Page 1", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="main"))
         page2_button = st.sidebar.button("Page 2", key='page2_button', help="Go to Page 2", on_click=lambda: st.experimental_set_query_params(logged_in=True, page="another"))
 
     if is_page_main:
-        display_main_content()
-    elif is_page_another:
-        display_another_page()
-
-else:
-    st.sidebar.header("Login")
-
-    # Create input fields for User ID and Password
-    user_id = st.text_input("User ID")
-    password = st.text_input("Password", type="password")
-
-    # Add a login button
-    login_button = st.button("Login")
-
-    # Check credentials upon login button press
-    if login_button:
-        if user_id == CORRECT_USER_ID and password == CORRECT_PASSWORD:
-            st.success("Logged in successfully!")
-            st.session_state.loggedin = True
-            # Redirect to another page after successful login
-            st.experimental_set_query_params(logged_in=True)  # Set query params to indicate logged in
-            st.experimental_rerun()  # Rerun the script to reflect the new state
-        else:
-            st.error("Incorrect User ID or Password. Please try again.")
+        display
